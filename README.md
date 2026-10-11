@@ -25,6 +25,5 @@ BazarDor is a Bengali-language web application that helps users explore daily pr
 - **UI Libraries:** React Icons, react-hot-toast
 - **Deployment:** Vercel
 
----
 
-**Developed with ❤️ by [TaheraScript](https://github.com/TaheraScript)**
+
