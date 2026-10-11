@@ -1,9 +1,9 @@
 import ProductDetails from "@/components/ProductDetails";
 import { notFound, redirect } from "next/navigation";
-import { headers } from "next/headers"; // REQUIREMENT: read the session cookie on the server
-import { auth } from "@/lib/auth"; // REQUIREMENT: Better Auth server instance
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
-const ProductsDetailPage = async ({
+const ProductPage = async ({
   params,
 }: {
   params: Promise<{ slug: string }>; // REQUIREMENT: folder is now [slug]
@@ -19,7 +19,7 @@ const ProductsDetailPage = async ({
     notFound();
   }
 
-  return <ProductDetails id={slug} />;
+  return <ProductDetails slug={slug} />;
 };
 
-export default ProductsDetailPage;
+export default ProductPage;

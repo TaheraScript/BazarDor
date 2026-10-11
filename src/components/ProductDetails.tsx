@@ -55,9 +55,21 @@ const toBnPct = (n: number) =>
     maximumFractionDigits: 1,
   });
 
-const ProductDetails = async ({ id }: { id: string }) => {
+// REQUIREMENT: prop renamed from id to slug, because the route is /product/[slug]
+const ProductDetails = async ({ slug }: { slug: string }) => {
+  // REQUIREMENT: the details API needs the numeric id, so find it from the list by slug (or id)
+  const listRes = await fetch(
+    "https://openapi.programming-hero.com/api/bazardor/products",
+  );
+  if (!listRes.ok) notFound();
+  const list: { id: number; slug?: string }[] = await listRes.json();
+  const match = Array.isArray(list)
+    ? list.find((p) => p.slug === slug || String(p.id) === slug)
+    : undefined;
+  if (!match) notFound(); // unknown product -> 404 page
+
   const res = await fetch(
-    `https://openapi.programming-hero.com/api/bazardor/products/${id}`,
+    `https://openapi.programming-hero.com/api/bazardor/products/${match.id}`,
   );
   if (!res.ok) notFound();
   const product: IProductDetails = await res.json();
