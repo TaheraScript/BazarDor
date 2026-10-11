@@ -1,3 +1,4 @@
+import Link from "next/link";
 import MarqueeText from "react-marquee-text";
 import "react-marquee-text/dist/styles.css";
 import { BsCaretUpFill, BsCaretDownFill, BsDash } from "react-icons/bs";
@@ -9,18 +10,16 @@ interface IHeadlines {
   };
   unit: string;
   id: number;
+  slug?: string;
   categoryIcon: string;
   nameBn: string;
   today: number;
 }
 
-// REQUIREMENT: the spec says "green up, red down, gray flat". Your code had up/down
-// reversed, so the colors now live here in one place and match the spec.
-// If your Figma shows the opposite, swap these two values only.
 const COLOR = {
-  up: "text-[#1a9951]",
-  down: "text-[#d44a4b]",
-  flat: "text-[#5f6761]",
+  up: "text-[#d44a4b] group-hover:text-white/80",
+  down: "text-[#1a9951] group-hover:text-white/80",
+  flat: "text-[#5f6761] group-hover:text-white/80",
 };
 
 const unitBn: Record<string, string> = {
@@ -45,61 +44,63 @@ const toBnPct = (n: number) =>
   });
 
 const Marquee = async () => {
-  // REQUIREMENT: cache the response so the ticker doesn't refetch on every request
   const res = await fetch(
     "https://openapi.programming-hero.com/api/bazardor/products",
     { next: { revalidate: 600 } },
   );
 
-  // REQUIREMENT: app must run without errors after deployment. If the API fails or
-  // returns a non-array, .map() would crash the layout on every page, so fall back
-  // to an empty list and render nothing.
   const json = res.ok ? await res.json() : [];
   const headlines: IHeadlines[] = Array.isArray(json) ? json : [];
 
   if (headlines.length === 0) return null;
 
   return (
-    <div className="bg-base-200">
-      <MarqueeText className="py-1 text-sm" direction="right" duration={20}>
+    <div className="border-y border-gray-200 bg-[#fafcfa]">
+      <MarqueeText className="text-sm" direction="right" duration={20}>
         {headlines.map((item, index: number) => {
-          // REQUIREMENT: guard against an item with no `change` object
           const dir = item.change?.dir ?? "flat";
           const pct = Math.abs(Number(item.change?.pct ?? 0));
           const unit = unitBn[item.unit?.toLowerCase()] ?? item.unit;
 
           return (
-            <span
+            <Link
               key={item.id ?? index}
-              className="mr-6 inline-flex items-center gap-2 whitespace-nowrap"
+              href={`/product/${item.slug ?? item.id}`}
+              className="group inline-flex items-center gap-2 whitespace-nowrap px-5 py-1.5 transition-colors hover:bg-[#05893E] hover:text-white"
             >
               <span>{item.categoryIcon}</span>
-              <span className="text-base-content text-[14px] font-medium">
+              <span className="text-base-content text-[14px] font-medium group-hover:text-white">
                 {item.nameBn}
               </span>
               <span>{`${toBn(item.today)} টাকা/${unit}`}</span>
 
               {dir === "up" && (
-                <span className={`inline-flex items-center gap-1 font-semibold ${COLOR.up}`}>
+                <span
+                  className={`inline-flex items-center gap-1 font-semibold ${COLOR.up}`}
+                >
                   <BsCaretUpFill />
                   {`${toBnPct(pct)} %`}
                 </span>
               )}
 
               {dir === "down" && (
-                <span className={`inline-flex items-center gap-1 font-semibold ${COLOR.down}`}>
+                <span
+                  className={`inline-flex items-center gap-1 font-semibold ${COLOR.down}`}
+                >
                   <BsCaretDownFill />
                   {`${toBnPct(pct)} %`}
                 </span>
               )}
 
               {dir === "flat" && (
-                <span className={`inline-flex items-center gap-1 font-semibold ${COLOR.flat}`}>
+                <span
+                  className={`inline-flex items-center gap-1 font-semibold ${COLOR.flat}`}
+                >
                   <BsDash size={16} />
                   {`${toBnPct(pct)} %`}
                 </span>
               )}
-            </span>
+            </Link>
           );
         })}
       </MarqueeText>

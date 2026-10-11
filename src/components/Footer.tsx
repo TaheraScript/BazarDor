@@ -1,5 +1,3 @@
-// src/components/Footer.tsx
-// REQUIREMENT: footer matching the Figma, with both texts exactly as specified
 const Footer = () => {
   return (
     <footer className="w-full border-t border-gray-100 bg-[#fafcfa]">

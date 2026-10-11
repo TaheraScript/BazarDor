@@ -6,12 +6,11 @@ import { auth } from "@/lib/auth";
 const ProductPage = async ({
   params,
 }: {
-  params: Promise<{ slug: string }>; // REQUIREMENT: folder is now [slug]
+  params: Promise<{ slug: string }>;
 }) => {
-  // REQUIREMENT: protected route, requires login
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) {
-    redirect("/signin?redirect=product"); // the sign-in page shows the toast
+    redirect("/signin?redirect=product");
   }
 
   const { slug } = await params;

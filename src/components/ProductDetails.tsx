@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BsCaretDownFill, BsCaretUpFill, BsChevronRight, BsDash } from "react-icons/bs";
+import {
+  BsCaretDownFill,
+  BsCaretUpFill,
+  BsChevronRight,
+  BsDash,
+} from "react-icons/bs";
 
 interface IMarket {
   market: string;
@@ -55,9 +60,7 @@ const toBnPct = (n: number) =>
     maximumFractionDigits: 1,
   });
 
-// REQUIREMENT: prop renamed from id to slug, because the route is /product/[slug]
 const ProductDetails = async ({ slug }: { slug: string }) => {
-  // REQUIREMENT: the details API needs the numeric id, so find it from the list by slug (or id)
   const listRes = await fetch(
     "https://openapi.programming-hero.com/api/bazardor/products",
   );
@@ -66,7 +69,7 @@ const ProductDetails = async ({ slug }: { slug: string }) => {
   const match = Array.isArray(list)
     ? list.find((p) => p.slug === slug || String(p.id) === slug)
     : undefined;
-  if (!match) notFound(); // unknown product -> 404 page
+  if (!match) notFound();
 
   const res = await fetch(
     `https://openapi.programming-hero.com/api/bazardor/products/${match.id}`,
@@ -127,7 +130,6 @@ const ProductDetails = async ({ slug }: { slug: string }) => {
               প্রতি {unit} · {product.categoryNameBn}
             </p>
 
-            {/* REQUIREMENT: category tags */}
             <div className="mt-1 flex flex-wrap gap-1.5">
               <Link
                 href={`/category/${product.category}`}
@@ -175,8 +177,7 @@ const ProductDetails = async ({ slug }: { slug: string }) => {
               সর্বনিম্ন দাম
             </p>
             <p className="text-lg font-bold leading-normal text-[#1a9951]">
-              {toBn(lowest)}{" "}
-              <span className="text-xs font-medium">টাকা</span>
+              {toBn(lowest)} <span className="text-xs font-medium">টাকা</span>
             </p>
             <p className="text-[11px] leading-normal text-[#5f6761]">
               সবচেয়ে কম দামের বাজার
@@ -188,8 +189,7 @@ const ProductDetails = async ({ slug }: { slug: string }) => {
               সর্বাধিক দাম
             </p>
             <p className="text-lg font-bold leading-normal text-[#d44a4b]">
-              {toBn(highest)}{" "}
-              <span className="text-xs font-medium">টাকা</span>
+              {toBn(highest)} <span className="text-xs font-medium">টাকা</span>
             </p>
             <p className="text-[11px] leading-normal text-[#5f6761]">
               সবচেয়ে বেশি দামের বাজার
@@ -218,8 +218,12 @@ const ProductDetails = async ({ slug }: { slug: string }) => {
           <table className="w-full min-w-140 border-collapse text-left text-xs">
             <thead>
               <tr className="bg-[#f0f5f0] text-[#5f6761]">
-                <th className="px-4 py-2.5 font-normal leading-normal">বাজার</th>
-                <th className="px-4 py-2.5 font-normal leading-normal">বিভাগ</th>
+                <th className="px-4 py-2.5 font-normal leading-normal">
+                  বাজার
+                </th>
+                <th className="px-4 py-2.5 font-normal leading-normal">
+                  বিভাগ
+                </th>
                 <th className="px-4 py-2.5 text-right font-normal leading-normal">
                   সর্বনিম্ন
                 </th>

@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react"; // REQUIREMENT: useEffect added for the redirect toast
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
-import toast from "react-hot-toast"; // REQUIREMENT: toast on login success / error
+import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 
 const SignInPage = () => {
@@ -13,7 +13,6 @@ const SignInPage = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // REQUIREMENT: toast when the user was redirected here from a protected route
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("redirect")) {
@@ -43,12 +42,12 @@ const SignInPage = () => {
     if (error) {
       const msg = "ইমেইল বা পাসওয়ার্ড সঠিক নয়";
       setErrorMessage(msg);
-      toast.error(msg); // REQUIREMENT: error toast on failed login
+      toast.error(msg);
       return;
     }
 
     if (data) {
-      toast.success("সফলভাবে সাইন ইন হয়েছে"); // REQUIREMENT: success toast on login
+      toast.success("সফলভাবে সাইন ইন হয়েছে");
       router.push("/");
       router.refresh();
     }
@@ -62,19 +61,19 @@ const SignInPage = () => {
 
     if (error) {
       setErrorMessage("Google দিয়ে সাইন ইন করা যায়নি");
-      toast.error("Google দিয়ে সাইন ইন করা যায়নি"); // REQUIREMENT: toast
+      toast.error("Google দিয়ে সাইন ইন করা যায়নি");
     }
   };
 
   const handleGithubSignIn = async () => {
     const { error } = await authClient.signIn.social({
-      provider: "github", // REQUIREMENT: was "google", so the GitHub button opened Google login
+      provider: "github",
       callbackURL: "/",
     });
 
     if (error) {
       setErrorMessage("Github দিয়ে সাইন ইন করা যায়নি");
-      toast.error("Github দিয়ে সাইন ইন করা যায়নি"); // REQUIREMENT: toast
+      toast.error("Github দিয়ে সাইন ইন করা যায়নি");
     }
   };
 
@@ -170,7 +169,6 @@ const SignInPage = () => {
 
         <p className="mt-4 text-center text-sm leading-normal text-[#1d271f]">
           অ্যাকাউন্ট নেই?{" "}
-          {/* REQUIREMENT: route is /signup, not /sign-up */}
           <Link href="/signup" className="text-[#05893E] hover:underline">
             সাইন আপ করুন
           </Link>

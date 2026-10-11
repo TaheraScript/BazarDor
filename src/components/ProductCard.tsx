@@ -36,7 +36,6 @@ const ProductCard = ({ item }: { item: IProductCard }) => {
   const unit = unitBn[item.unit?.toLowerCase()] ?? item.unit;
 
   return (
-    // REQUIREMENT: route is /product/[slug] (was /products/[id]); falls back to the id if there is no slug
     <Link href={`/product/${item.slug ?? item.id}`} className="block">
       <div className="rounded-xl border border-gray-200 bg-[#fafcfa] p-6">
         <div className="flex items-center gap-3">
@@ -57,7 +56,9 @@ const ProductCard = ({ item }: { item: IProductCard }) => {
 
         <div className="flex items-end justify-between">
           <div className="flex items-baseline gap-1">
-            <p className="text-[18px] font-bold leading-tight">{toBn(item.today)}</p>
+            <p className="text-[18px] font-bold leading-tight">
+              {toBn(item.today)}
+            </p>
             <p className="text-[13px] font-medium">টাকা</p>
           </div>
 

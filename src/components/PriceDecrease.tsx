@@ -17,7 +17,7 @@ const PriceDecrease = async () => {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {products
           .filter((item) => item.change?.dir === "down")
-          // REQUIREMENT: "Top 6 fallers" means the biggest drops first
+
           .sort((a, b) => Math.abs(b.change.pct) - Math.abs(a.change.pct))
           .slice(0, 6)
           .map((item) => (

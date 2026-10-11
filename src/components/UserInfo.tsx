@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BsBoxArrowLeft, BsCaretDownFill, BsPersonFill } from "react-icons/bs";
-import toast from "react-hot-toast"; // REQUIREMENT: toast on logout
+import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 
 const UserInfo = () => {
@@ -42,11 +42,11 @@ const UserInfo = () => {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          toast.success("সফলভাবে সাইন আউট হয়েছে"); // REQUIREMENT: toast on logout
+          toast.success("সফলভাবে সাইন আউট হয়েছে");
           router.push("/");
           router.refresh();
         },
-        // REQUIREMENT: toast on error
+
         onError: () => {
           toast.error("সাইন আউট করা যায়নি, আবার চেষ্টা করুন");
         },
@@ -60,13 +60,13 @@ const UserInfo = () => {
     return (
       <div className="flex items-center gap-2">
         <Link
-          href="/signin" // REQUIREMENT: route is /signin, not /sign-in
+          href="/signin"
           className="btn btn-ghost btn-sm rounded px-4 font-medium text-[#1D271F] hover:bg-gray-100"
         >
           সাইন ইন
         </Link>
         <Link
-          href="/signup" // REQUIREMENT: route is /signup, not /sign-up
+          href="/signup"
           className="btn btn-sm rounded border-none bg-[#05893E] px-5 font-medium text-white shadow-md"
         >
           সাইন আপ

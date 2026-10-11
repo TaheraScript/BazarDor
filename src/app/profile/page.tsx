@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BsBoxArrowLeft } from "react-icons/bs";
-import toast from "react-hot-toast"; // REQUIREMENT: toast on logout and protected-route redirect
+import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 
 const ProfilePage = () => {
@@ -14,8 +14,8 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (!isPending && !user) {
-      toast.error("চালিয়ে যেতে সাইন ইন করুন"); // REQUIREMENT: toast on protected-route redirect
-      router.replace("/signin"); // REQUIREMENT: route is /signin, not /sign-in
+      toast.error("চালিয়ে যেতে সাইন ইন করুন");
+      router.replace("/signin");
     }
   }, [isPending, user, router]);
 
@@ -23,7 +23,7 @@ const ProfilePage = () => {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          toast.success("সফলভাবে সাইন আউট হয়েছে"); // REQUIREMENT: toast on logout
+          toast.success("সফলভাবে সাইন আউট হয়েছে");
           router.push("/");
           router.refresh();
         },
@@ -80,8 +80,6 @@ const ProfilePage = () => {
         </button>
       </section>
 
-      {/* REQUIREMENT (C3): update button that takes the user to another route.
-          The name form moved to /profile/update. */}
       <Link
         href="/profile/update"
         className="flex h-10 w-full items-center justify-center rounded-lg bg-[#05893E] text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#047a37]"

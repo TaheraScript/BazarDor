@@ -1,75 +1,79 @@
-'use client'
-import { useState } from "react"; 
+"use client";
+import { useState } from "react";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation"; // REQUIREMENT: replaces redirect(), which is not meant for client event handlers
-import toast from "react-hot-toast"; // REQUIREMENT: toast on signup / validation error
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const SignUpPage = () => {
-    const router = useRouter();
-    const [errorMessage, setErrorMessage] = useState("");
-    const [loading, setLoading] = useState(false); // REQUIREMENT: loading state so the button can't be clicked twice
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    const onSubmit = async (e: React.SubmitEvent<HTMLElement>) => {
-        e.preventDefault()
-        setErrorMessage("")
-        const formData = new FormData(e.currentTarget as HTMLFormElement)
-        const { confirmPassword, ...user } = Object.fromEntries(formData.entries()) as {name:string,email:string,password:string,confirmPassword:string}
+  const onSubmit = async (e: React.SubmitEvent<HTMLElement>) => {
+    e.preventDefault();
+    setErrorMessage("");
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const { confirmPassword, ...user } = Object.fromEntries(
+      formData.entries(),
+    ) as {
+      name: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+    };
 
-        // REQUIREMENT: validation error shown as toast + message
-        if (user.password !== confirmPassword) {
-            const msg = "পাসওয়ার্ড দুটি মিলছে না";
-            setErrorMessage(msg);
-            toast.error(msg);
-            return;
-        }
-
-        setLoading(true)
-        const { data, error } = await authClient.signUp.email({
-            ...user, // REQUIREMENT: confirmPassword is no longer sent to the API
-        })
-        setLoading(false)
-
-        // REQUIREMENT: show error as toast + message in the form
-        if (error) {
-            const msg = error.message || "সাইন আপ করা যায়নি, আবার চেষ্টা করুন";
-            setErrorMessage(msg);
-            toast.error(msg);
-            return;
-        }
-
-        // REQUIREMENT: after successful registration go to the login page (was "/")
-        if (data) {
-            toast.success("অ্যাকাউন্ট তৈরি হয়েছে, এখন সাইন ইন করুন");
-            router.push("/signin");
-        }
+    if (user.password !== confirmPassword) {
+      const msg = "পাসওয়ার্ড দুটি মিলছে না";
+      setErrorMessage(msg);
+      toast.error(msg);
+      return;
     }
 
-    const handleGoogleSignIn = async () => {
-        const { error } = await authClient.signIn.social({
-            provider: "google",
-            callbackURL: "/", 
-        });
+    setLoading(true);
+    const { data, error } = await authClient.signUp.email({
+      ...user,
+    });
+    setLoading(false);
 
-        if (error) {
-            setErrorMessage("Google দিয়ে সাইন ইন করা যায়নি");
-            toast.error("Google দিয়ে সাইন ইন করা যায়নি"); // REQUIREMENT: toast
-        }
-    };
+    if (error) {
+      const msg = error.message || "সাইন আপ করা যায়নি, আবার চেষ্টা করুন";
+      setErrorMessage(msg);
+      toast.error(msg);
+      return;
+    }
 
-    const handleGithubSignIn = async () => {
-        const { error } = await authClient.signIn.social({
-            provider: "github", // REQUIREMENT: was "google", so the GitHub button opened Google login
-            callbackURL: "/", 
-        });
+    if (data) {
+      toast.success("অ্যাকাউন্ট তৈরি হয়েছে, এখন সাইন ইন করুন");
+      router.push("/signin");
+    }
+  };
 
-        if (error) {
-            setErrorMessage("Github দিয়ে সাইন ইন করা যায়নি");
-            toast.error("Github দিয়ে সাইন ইন করা যায়নি"); // REQUIREMENT: toast
-        }
-    };
+  const handleGoogleSignIn = async () => {
+    const { error } = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+
+    if (error) {
+      setErrorMessage("Google দিয়ে সাইন ইন করা যায়নি");
+      toast.error("Google দিয়ে সাইন ইন করা যায়নি");
+    }
+  };
+
+  const handleGithubSignIn = async () => {
+    const { error } = await authClient.signIn.social({
+      provider: "github",
+      callbackURL: "/",
+    });
+
+    if (error) {
+      setErrorMessage("Github দিয়ে সাইন ইন করা যায়নি");
+      toast.error("Github দিয়ে সাইন ইন করা যায়নি");
+    }
+  };
 
   return (
     <div className="mx-auto flex max-w-md flex-col items-center px-5 py-10">
@@ -131,7 +135,7 @@ const SignUpPage = () => {
               id="password"
               name="password"
               type="password"
-               autoComplete="new-password"
+              autoComplete="new-password"
               required
               minLength={8}
               placeholder="কমপক্ষে ৮ অক্ষর"
@@ -158,7 +162,6 @@ const SignUpPage = () => {
             />
           </div>
 
-         
           {errorMessage && (
             <p className="text-sm leading-normal text-[#d44a4b]">
               {errorMessage}
@@ -167,7 +170,7 @@ const SignUpPage = () => {
 
           <button
             type="submit"
-            disabled={loading} // REQUIREMENT: disabled while submitting
+            disabled={loading}
             className="h-10 w-full cursor-pointer rounded-lg bg-[#05893E] text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#047a37] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "অপেক্ষা করুন..." : "অ্যাকাউন্ট তৈরি করুন"}

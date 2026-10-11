@@ -11,14 +11,15 @@ export default function NotFound() {
       </h1>
 
       <p className="mt-2 max-w-sm text-sm text-gray-500">
-        আপনি যে পৃষ্ঠাটি খুঁজছেন তা পাওয়া যায়নি। লিংকটি যাচাই করুন বা হোম পেজে ফিরে যান।
+        আপনি যে পৃষ্ঠাটি খুঁজছেন তা পাওয়া যায়নি। লিংকটি যাচাই করুন বা হোম পেজে
+        ফিরে যান।
       </p>
 
       <Link
         href="/"
         className="mt-6 rounded-lg bg-green-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-800"
       >
-         হোম পেজে ফিরে যান
+        হোম পেজে ফিরে যান
       </Link>
     </section>
   );

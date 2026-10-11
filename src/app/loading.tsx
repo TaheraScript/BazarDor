@@ -1,4 +1,3 @@
-// REQUIREMENT: skeleton while Home data is being fetched (replaces the spinner)
 export default function Loading() {
   return (
     <section className="mx-5 mt-4 max-w-7xl xl:mx-auto">

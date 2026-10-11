@@ -14,7 +14,6 @@ const UpdateProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // REQUIREMENT: protected route, redirect to /signin with a toast
   useEffect(() => {
     if (!isPending && !user) {
       toast.error("চালিয়ে যেতে সাইন ইন করুন");
@@ -32,14 +31,13 @@ const UpdateProfilePage = () => {
     if (!name) {
       const msg = "নতুন নাম লিখুন";
       setErrorMessage(msg);
-      toast.error(msg); // REQUIREMENT: validation toast
+      toast.error(msg);
       return;
     }
 
     setSaving(true);
     setErrorMessage("");
 
-    // REQUIREMENT (C3): Better Auth update-user
     const { error } = await authClient.updateUser({ name });
 
     setSaving(false);
@@ -52,7 +50,7 @@ const UpdateProfilePage = () => {
     }
 
     toast.success("তথ্য আপডেট হয়েছে");
-    router.push("/profile"); // back to the profile to see the new name
+    router.push("/profile");
     router.refresh();
   };
 
@@ -100,7 +98,6 @@ const UpdateProfilePage = () => {
             disabled={saving}
             className="h-10 w-full cursor-pointer rounded-lg bg-[#05893E] text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#047a37] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {/* REQUIREMENT: button text "Update Information" */}
             {saving ? "অপেক্ষা করুন..." : "Update Information"}
           </button>
         </form>
