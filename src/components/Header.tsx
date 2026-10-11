@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import NavLinks from "./NavLinks";
+import UserInfo from "./UserInfo";
 
 const date = new Date().toLocaleDateString("bn-BD", {
   dateStyle: "full",
@@ -29,9 +30,8 @@ const Header = () => {
         </div>
         </div>
         <div>
-          <button className="btn btn-ghost btn-sm rounded px-4 font-medium text-[#1D271F] hover:bg-gray-100 ">সাইন ইন</button>
-        <button className="btn btn-sm rounded border-none bg-[#05893E] px-5 font-medium text-white shadow-md ">সাইন আপ</button>
-        </div>
+           </div>
+          <UserInfo></UserInfo>
       </div>
       <NavLinks></NavLinks>
     </header>

@@ -41,7 +41,7 @@ const unitBn: Record<string, string> = {
 
 const toBn = (n: number) => Number(n).toLocaleString("bn-BD");
 
-// whole numbers: ৬২   |   fractions: ৬৩.৫০
+
 const toBnPrice = (n: number) =>
   Number.isInteger(n)
     ? toBn(n)
@@ -68,7 +68,7 @@ const ProductDetails = async ({ id }: { id: string }) => {
   const pct = Math.abs(product.change?.pct ?? 0);
   const diff = Math.abs(product.today - product.yesterday);
 
-  // market rows with their average, cheapest first
+  
   const rows = [...(product.markets ?? [])]
     .map((m) => ({ ...m, avg: (m.min + m.max) / 2 }))
     .sort((a, b) => a.avg - b.avg);
@@ -88,7 +88,7 @@ const ProductDetails = async ({ id }: { id: string }) => {
 
   return (
     <div className="mx-5 mt-6 mb-10 max-w-5xl space-y-4 xl:mx-auto">
-      {/* ---------- Breadcrumb ---------- */}
+      
       <nav className="flex items-center gap-2 text-xs leading-normal text-[#5f6761]">
         <Link href="/" className="hover:text-[#05893E]">
           হোম
@@ -104,10 +104,10 @@ const ProductDetails = async ({ id }: { id: string }) => {
         <span className="text-[#1d271f]">{product.nameBn}</span>
       </nav>
 
-      {/* ---------- Header card ---------- */}
+    
       <section className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-gray-200 bg-[#fafcfa] p-5 sm:flex-row sm:items-center">
         <div className="flex items-center gap-4">
-          <span className="flex h-[84px] w-[84px] shrink-0 items-center justify-center rounded-xl bg-[#f0f5f0] text-4xl">
+          <span className="flex h-21 w-21 shrink-0 items-center justify-center rounded-xl bg-[#f0f5f0] text-4xl">
             {product.image}
           </span>
 
@@ -126,8 +126,8 @@ const ProductDetails = async ({ id }: { id: string }) => {
           </div>
         </div>
 
-        {/* today's price box */}
-        <div className="min-w-[128px] rounded-xl bg-[#f0f5f0] px-6 py-3 text-center">
+   
+        <div className="min-w-32 rounded-xl bg-[#f0f5f0] px-6 py-3 text-center">
           <p className="text-[11px] leading-normal text-[#5f6761]">আজকের দাম</p>
           <p className="text-3xl font-extrabold leading-normal text-[#1d271f]">
             {toBn(product.today)}
@@ -146,7 +146,7 @@ const ProductDetails = async ({ id }: { id: string }) => {
         </div>
       </section>
 
-      {/* ---------- Price summary ---------- */}
+ 
       <section className="rounded-2xl border border-gray-200 bg-[#fafcfa] p-5">
         <h2 className="mb-3 text-base font-semibold leading-normal text-[#1d271f]">
           দামের সারসংক্ষেপ
@@ -192,14 +192,14 @@ const ProductDetails = async ({ id }: { id: string }) => {
         </div>
       </section>
 
-      {/* ---------- Market-wise table ---------- */}
+      
       <section className="rounded-2xl border border-gray-200 bg-[#fafcfa] p-5">
         <h2 className="mb-3 text-base font-semibold leading-normal text-[#1d271f]">
           বাজারভিত্তিক আজকের দাম
         </h2>
 
         <div className="overflow-x-auto rounded-xl border border-gray-200">
-          <table className="w-full min-w-[560px] border-collapse text-left text-xs">
+          <table className="w-full min-w-140 border-collapse text-left text-xs">
             <thead>
               <tr className="bg-[#f0f5f0] text-[#5f6761]">
                 <th className="px-4 py-2.5 font-normal leading-normal">বাজার</th>
@@ -222,8 +222,8 @@ const ProductDetails = async ({ id }: { id: string }) => {
     key={row.market}
     className={`text-[#1d271f] ${
       i % 2 === 0
-        ? "border-y border-[#c3c7c3] bg-[#f0f5f0]" // rows 1, 3, 5... : page color + border
-        : "bg-[#fafcfa]" // rows 2, 4, 6... : light, no border
+        ? "border-y border-[#c3c7c3] bg-[#f0f5f0]" 
+        : "bg-[#fafcfa]" 
     }`}
   >
     <td className="px-4 py-2.5 leading-normal">{row.market}</td>
