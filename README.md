@@ -5,7 +5,7 @@
 BazarDor is a Bengali-language web application that helps users explore daily product prices, track price changes, and compare market prices across Bangladesh.
 
 🔗 **Live Demo:** [BazarDor](https://bazar-mart-next-js.vercel.app/)  
-📦 **GitHub Repository:** [BazarMart-Next.js](https://github.com/TaheraScript/BazarMart-Next.js)
+📦 **GitHub Repository:** [BazarDor](https://github.com/TaheraScript/BazarDor)
 
 ## ✨ Key Features
 
