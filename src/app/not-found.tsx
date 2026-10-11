@@ -18,7 +18,7 @@ export default function NotFound() {
         href="/"
         className="mt-6 rounded-lg bg-green-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-800"
       >
-        হোমে ফিরে যান
+         হোম পেজে ফিরে যান
       </Link>
     </section>
   );

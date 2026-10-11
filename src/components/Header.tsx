@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
-import NavLinks from "./NavLinks";
+
 import UserInfo from "./UserInfo";
+import NavLinks from "./NavLinks";
 
 const date = new Date().toLocaleDateString("bn-BD", {
   dateStyle: "full",

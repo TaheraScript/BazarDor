@@ -1,17 +1,25 @@
 import ProductDetails from "@/components/ProductDetails";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { headers } from "next/headers"; // REQUIREMENT: read the session cookie on the server
+import { auth } from "@/lib/auth"; // REQUIREMENT: Better Auth server instance
 
 const ProductsDetailPage = async ({
   params,
 }: {
-  params: Promise<{ productsId: string }>;
+  params: Promise<{ slug: string }>; // REQUIREMENT: folder is now [slug]
 }) => {
-  const { productsId } = await params;
-  if(!productsId){
-    notFound()
+  // REQUIREMENT: protected route, requires login
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    redirect("/signin?redirect=product"); // the sign-in page shows the toast
   }
 
-  return <ProductDetails id={productsId} />;
+  const { slug } = await params;
+  if (!slug) {
+    notFound();
+  }
+
+  return <ProductDetails id={slug} />;
 };
 
 export default ProductsDetailPage;

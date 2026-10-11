@@ -3,6 +3,7 @@ import { BsCaretDownFill, BsCaretUpFill, BsDash } from "react-icons/bs";
 
 export interface IProductCard {
   id: number;
+  slug?: string; // REQUIREMENT: used for the /product/[slug] link (optional in case the API omits it)
   nameBn: string;
   categoryIcon: string;
   unit: string;
@@ -35,8 +36,8 @@ const ProductCard = ({ item }: { item: IProductCard }) => {
   const unit = unitBn[item.unit?.toLowerCase()] ?? item.unit;
 
   return (
-
-    <Link href={`/products/${item.id}`} className="block">
+    // REQUIREMENT: route is /product/[slug], not /products/[id]. Falls back to the id if there is no slug.
+    <Link href={`/product/${item.slug ?? item.id}`} className="block">
     <div className="rounded-xl border border-gray-200 bg-[#fafcfa] p-6">
       <div className="flex items-center gap-3">
   

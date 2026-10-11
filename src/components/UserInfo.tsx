@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BsBoxArrowLeft, BsCaretDownFill, BsPersonFill } from "react-icons/bs";
+import toast from "react-hot-toast"; // REQUIREMENT: toast on logout
 import { authClient } from "@/lib/auth-client";
 
 const UserInfo = () => {
@@ -12,6 +13,7 @@ const UserInfo = () => {
   const user = session?.user;
 
   const [open, setOpen] = useState(false);
+  const [failedImage, setFailedImage] = useState<string | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,8 +42,13 @@ const UserInfo = () => {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
+          toast.success("সফলভাবে সাইন আউট হয়েছে"); // REQUIREMENT: toast on logout
           router.push("/");
           router.refresh();
+        },
+        // REQUIREMENT: toast on error
+        onError: () => {
+          toast.error("সাইন আউট করা যায়নি, আবার চেষ্টা করুন");
         },
       },
     });
@@ -53,13 +60,13 @@ const UserInfo = () => {
     return (
       <div className="flex items-center gap-2">
         <Link
-          href="/sign-in"
+          href="/signin" // REQUIREMENT: route is /signin, not /sign-in
           className="btn btn-ghost btn-sm rounded px-4 font-medium text-[#1D271F] hover:bg-gray-100"
         >
           সাইন ইন
         </Link>
         <Link
-          href="/sign-up"
+          href="/signup" // REQUIREMENT: route is /signup, not /sign-up
           className="btn btn-sm rounded border-none bg-[#05893E] px-5 font-medium text-white shadow-md"
         >
           সাইন আপ
@@ -68,7 +75,9 @@ const UserInfo = () => {
     );
   }
 
-  const firstName = user.name?.split(" ")[0] ?? "";
+  const displayName = user.name || user.email?.split("@")[0] || "User";
+  const firstName = displayName.split(" ")[0];
+  const showImage = user.image && failedImage !== user.image;
 
   return (
     <div ref={wrapperRef} className="relative">
@@ -79,11 +88,13 @@ const UserInfo = () => {
         aria-expanded={open}
         className="flex cursor-pointer items-center gap-2.5 rounded-xl p-1 transition-colors hover:bg-gray-100"
       >
-        {user.image ? (
+        {showImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={user.image}
-            alt={user.name}
+            src={user.image!}
+            alt={displayName}
+            referrerPolicy="no-referrer"
+            onError={() => setFailedImage(user.image!)}
             className="h-9 w-9 rounded-xl object-cover"
           />
         ) : (
@@ -104,7 +115,7 @@ const UserInfo = () => {
           className="absolute right-0 top-full z-50 mt-3 w-64 rounded-2xl border border-gray-200 bg-[#fafcfa] p-5 shadow-xl"
         >
           <p className="truncate text-sm font-bold leading-normal text-[#1d271f]">
-            {user.name}
+            {displayName}
           </p>
           <p className="mb-4 truncate text-xs leading-normal text-[#5f6761]">
             {user.email}

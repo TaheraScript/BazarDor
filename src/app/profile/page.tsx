@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BsBoxArrowLeft } from "react-icons/bs";
+import toast from "react-hot-toast"; // REQUIREMENT: toast on logout and protected-route redirect
 import { authClient } from "@/lib/auth-client";
 
 const ProfilePage = () => {
@@ -10,60 +12,23 @@ const ProfilePage = () => {
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
 
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
-
   useEffect(() => {
-    if (!isPending && !user) router.replace("/sign-in");
+    if (!isPending && !user) {
+      toast.error("চালিয়ে যেতে সাইন ইন করুন"); // REQUIREMENT: toast on protected-route redirect
+      router.replace("/signin"); // REQUIREMENT: route is /signin, not /sign-in
+    }
   }, [isPending, user, router]);
 
   const handleSignOut = async () => {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
+          toast.success("সফলভাবে সাইন আউট হয়েছে"); // REQUIREMENT: toast on logout
           router.push("/");
           router.refresh();
         },
       },
     });
-  };
-
-  const handleUpdateProfile = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (saving) return;
-
-    const form = e.currentTarget;
-
-    const formData = new FormData(form);
-    const newUserData = Object.fromEntries(formData.entries()) as {
-      name: string;
-    };
-
-    const name = newUserData.name.trim();
-
-    if (!name) {
-      setMessage({ type: "error", text: "নতুন নাম লিখুন" });
-      return;
-    }
-
-    setSaving(true);
-    setMessage(null);
-
-    const { error } = await authClient.updateUser({ name });
-
-    setSaving(false);
-
-    if (error) {
-      setMessage({ type: "error", text: "আপডেট করা যায়নি, আবার চেষ্টা করুন" });
-      return;
-    }
-
-    form.reset();
-    setMessage({ type: "success", text: "তথ্য আপডেট হয়েছে" });
-    router.refresh();
   };
 
   if (isPending || !user) return null;
@@ -115,47 +80,14 @@ const ProfilePage = () => {
         </button>
       </section>
 
-      <section className="rounded-2xl border border-gray-200 bg-[#fafcfa] p-4 pb-5">
-        <h2 className="mb-4 mt-1 text-sm font-semibold leading-normal text-[#1d271f]">
-          তথ্য
-        </h2>
-
-        <form onSubmit={handleUpdateProfile} className="space-y-3 px-4">
-          <div>
-            <label
-              htmlFor="name"
-              className="mb-1.5 block text-xs font-medium leading-normal text-[#1d271f]"
-            >
-              নাম
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="off"
-              className="h-10 w-full rounded-lg border border-gray-200 bg-white/70 px-3 text-sm text-[#1d271f] outline-none focus:border-[#05893E] focus:ring-2 focus:ring-[#05893E]/20"
-            />
-          </div>
-
-          {message && (
-            <p
-              className={`text-sm leading-normal ${
-                message.type === "success" ? "text-[#1a9951]" : "text-[#d44a4b]"
-              }`}
-            >
-              {message.text}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={saving}
-            className="h-10 w-full cursor-pointer rounded-lg bg-[#05893E] text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#047a37] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {saving ? "অপেক্ষা করুন..." : "আপডেট"}
-          </button>
-        </form>
-      </section>
+      {/* REQUIREMENT (C3): update button that takes the user to another route.
+          The name form moved to /profile/update. */}
+      <Link
+        href="/profile/update"
+        className="flex h-10 w-full items-center justify-center rounded-lg bg-[#05893E] text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#047a37]"
+      >
+        তথ্য আপডেট করুন
+      </Link>
     </div>
   );
 };

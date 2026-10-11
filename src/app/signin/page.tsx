@@ -1,81 +1,96 @@
-'use client'
-import { useState } from "react"; 
+"use client";
+
+import { useEffect, useState } from "react"; // REQUIREMENT: useEffect added for the redirect toast
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import toast from "react-hot-toast"; // REQUIREMENT: toast on login success / error
 import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
-const SignUpPage = () => {
-    const [errorMessage, setErrorMessage] = useState("");
 
-    const onSubmit =async(e : React.SubmitEvent<HTMLElement>)=>{
-e.preventDefault()
-const formData = new FormData(e.target)
-const user =Object.fromEntries(formData.entries()) as {name:string,email:string,password:string,confirmPassword:string}
-const {data,error} = await authClient.signUp.email({
-    ...user,
-    callbackURL:"/"
-})
-console.log(user)
-if(data){
-    console.log(data)
-    redirect('/')
-}
-if(error)
-console.log(error)
+const SignInPage = () => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
+  // REQUIREMENT: toast when the user was redirected here from a protected route
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("redirect")) {
+      toast.error("পণ্যের বিস্তারিত দেখতে সাইন ইন করুন");
     }
-     const handleGoogleSignIn = async () => {
-  const { error } = await authClient.signIn.social({
-    provider: "google",
-    callbackURL: "/", 
-  });
+  }, []);
 
-  if (error) {
-    setErrorMessage("Google দিয়ে সাইন ইন করা যায়নি");
-  }
-};
- const handleGithubSignIn = async () => {
-  const { error } = await authClient.signIn.social({
-    provider: "google",
-    callbackURL: "/", 
-  });
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (loading) return;
+    setLoading(true);
+    setErrorMessage("");
 
-  if (error) {
-    setErrorMessage("Github দিয়ে সাইন ইন করা যায়নি");
-  }
-};
+    const formData = new FormData(e.currentTarget);
+    const user = Object.fromEntries(formData.entries()) as {
+      email: string;
+      password: string;
+    };
+
+    const { data, error } = await authClient.signIn.email({
+      ...user,
+      callbackURL: "/",
+    });
+
+    setLoading(false);
+
+    if (error) {
+      const msg = "ইমেইল বা পাসওয়ার্ড সঠিক নয়";
+      setErrorMessage(msg);
+      toast.error(msg); // REQUIREMENT: error toast on failed login
+      return;
+    }
+
+    if (data) {
+      toast.success("সফলভাবে সাইন ইন হয়েছে"); // REQUIREMENT: success toast on login
+      router.push("/");
+      router.refresh();
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    const { error } = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+
+    if (error) {
+      setErrorMessage("Google দিয়ে সাইন ইন করা যায়নি");
+      toast.error("Google দিয়ে সাইন ইন করা যায়নি"); // REQUIREMENT: toast
+    }
+  };
+
+  const handleGithubSignIn = async () => {
+    const { error } = await authClient.signIn.social({
+      provider: "github", // REQUIREMENT: was "google", so the GitHub button opened Google login
+      callbackURL: "/",
+    });
+
+    if (error) {
+      setErrorMessage("Github দিয়ে সাইন ইন করা যায়নি");
+      toast.error("Github দিয়ে সাইন ইন করা যায়নি"); // REQUIREMENT: toast
+    }
+  };
+
   return (
     <div className="mx-auto flex max-w-md flex-col items-center px-5 py-10">
       <div className="mb-6 text-center">
         <h1 className="text-[28px] font-bold leading-normal text-[#1d271f]">
-          অ্যাকাউন্ট তৈরি করুন
+          সাইন ইন
         </h1>
         <p className="text-sm leading-normal text-[#5f6761]">
-          বিনা খরচে সাইন আপ করে সব বিস্তারিত দাম দেখুন।
+          বিস্তারিত দাম, বাজার তুলনা ও প্রোফাইল দেখতে অ্যাকাউন্টে ঢুকুন।
         </p>
       </div>
 
       <div className="w-full rounded-2xl border border-gray-200 bg-[#fafcfa] p-6">
         <form onSubmit={onSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="name"
-              className="mb-1.5 block text-sm font-medium leading-normal text-[#1d271f]"
-            >
-              নাম
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              required
-              placeholder="যেমন: রহিম উদ্দিন"
-              className="h-10 w-full rounded-lg border border-gray-200 bg-white/70 px-3 text-sm text-[#1d271f] outline-none placeholder:text-[#5f6761] focus:border-[#05893E] focus:ring-2 focus:ring-[#05893E]/20"
-            />
-          </div>
-
           <div>
             <label
               htmlFor="email"
@@ -105,34 +120,13 @@ console.log(error)
               id="password"
               name="password"
               type="password"
-               autoComplete="new-password"
+              autoComplete="current-password"
               required
-              minLength={8}
               placeholder="কমপক্ষে ৮ অক্ষর"
               className="h-10 w-full rounded-lg border border-gray-200 bg-white/70 px-3 text-sm text-[#1d271f] outline-none placeholder:text-[#5f6761] focus:border-[#05893E] focus:ring-2 focus:ring-[#05893E]/20"
             />
           </div>
 
-          <div>
-            <label
-              htmlFor="confirmPassword"
-              className="mb-1.5 block text-sm font-medium leading-normal text-[#1d271f]"
-            >
-              পাসওয়ার্ড নিশ্চিত করুন
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              required
-              minLength={8}
-              placeholder="আবার লিখুন"
-              className="h-10 w-full rounded-lg border border-gray-200 bg-white/70 px-3 text-sm text-[#1d271f] outline-none placeholder:text-[#5f6761] focus:border-[#05893E] focus:ring-2 focus:ring-[#05893E]/20"
-            />
-          </div>
-
-         
           {errorMessage && (
             <p className="text-sm leading-normal text-[#d44a4b]">
               {errorMessage}
@@ -141,9 +135,10 @@ console.log(error)
 
           <button
             type="submit"
-            className="h-10 w-full cursor-pointer rounded-lg bg-[#05893E] text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#047a37]"
+            disabled={loading}
+            className="h-10 w-full cursor-pointer rounded-lg bg-[#05893E] text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#047a37] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            অ্যাকাউন্ট তৈরি করুন
+            {loading ? "অপেক্ষা করুন..." : "সাইন ইন"}
           </button>
         </form>
 
@@ -174,9 +169,10 @@ console.log(error)
         </div>
 
         <p className="mt-4 text-center text-sm leading-normal text-[#1d271f]">
-          অ্যাকাউন্ট আছে?{" "}
-          <Link href="/signin" className="text-[#05893E] hover:underline">
-            সাইন ইন করুন
+          অ্যাকাউন্ট নেই?{" "}
+          {/* REQUIREMENT: route is /signup, not /sign-up */}
+          <Link href="/signup" className="text-[#05893E] hover:underline">
+            সাইন আপ করুন
           </Link>
         </p>
       </div>
@@ -191,4 +187,4 @@ console.log(error)
   );
 };
 
-export default SignUpPage;
+export default SignInPage;
